@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DE7B5C"/>
+      <stop offset="100%" stop-color="#BF5837"/>
+    </linearGradient>
+    <linearGradient id="soleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FAF9F5"/>
+      <stop offset="100%" stop-color="#EDE8E0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base for App Icon / Favicon -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Inner Border Highlight -->
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="4"/>
+
+  <!-- Technical Footwear Symbol: Athletic & Craft Silhouette -->
+  <g transform="translate(48, 128)">
+    <!-- Shoe Upper Outline & Body -->
+    <path d="M 52 176 
+             C 74 132, 110 84, 150 72 
+             C 182 62, 214 96, 252 122 
+             C 288 144, 332 142, 362 146
+             C 388 150, 412 168, 412 184
+             L 412 196
+             C 412 204, 396 210, 368 210
+             L 52 210
+             Z" 
+          fill="#FAF9F5" 
+          fill-opacity="0.96"/>
+
+    <!-- Collar & Tongue Opening Detail -->
+    <path d="M 126 80 
+             C 142 54, 168 40, 186 44 
+             C 198 47, 204 60, 208 78
+             C 192 78, 164 88, 142 98 Z" 
+          fill="#BF5837" 
+          fill-opacity="0.88"/>
+
+    <!-- Midsole Layer -->
+    <path d="M 44 216 
+             L 414 216 
+             C 424 216, 428 226, 420 234 
+             C 410 244, 388 250, 360 250 
+             L 76 250 
+             C 54 250, 38 238, 44 216 Z" 
+          fill="url(#soleGrad)"/>
+
+    <!-- Outsole Cushion / Tech Grooves (3 precision pods) -->
+    <rect x="74" y="258" width="56" height="12" rx="6" fill="#FAF9F5" fill-opacity="0.85"/>
+    <rect x="144" y="258" width="68" height="12" rx="6" fill="#FAF9F5" fill-opacity="0.85"/>
+    <rect x="226" y="258" width="76" height="12" rx="6" fill="#FAF9F5" fill-opacity="0.85"/>
+    <rect x="316" y="258" width="70" height="12" rx="6" fill="#FAF9F5" fill-opacity="0.85"/>
+
+    <!-- Dynamic Material Flow Accent Line -->
+    <path d="M 98 178 C 172 178, 244 148, 336 172" 
+          stroke="#DE7B5C" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          fill="none"/>
+  </g>
+</svg>
