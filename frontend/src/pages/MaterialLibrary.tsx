@@ -199,6 +199,9 @@ export const MaterialLibrary: React.FC<MaterialLibraryProps> = ({
         await api.updateMaterial(editingMaterial.id, payload);
       } else {
         await api.createMaterial(payload);
+        if (selectedCategory !== 'All' && selectedCategory !== payload.category) {
+          setSelectedCategory('All');
+        }
       }
       setIsAddEditOpen(false);
       await loadMaterials();
