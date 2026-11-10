@@ -1,0 +1,161 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[top=1.0cm, bottom=1.0cm, left=1.2cm, right=1.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Brand Color Definitions (Claude & Solewise Aesthetic)
+\definecolor{soleterracotta}{HTML}{D97757}
+\definecolor{soledark}{HTML}{201E1B}
+\definecolor{soleivory}{HTML}{FAF9F5}
+\definecolor{soleborder}{HTML}{E6E0D6}
+\definecolor{solegreen}{HTML}{2E6B4F}
+\definecolor{solegray}{HTML}{736E65}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=soleterracotta,
+    urlcolor=soleterracotta
+}
+
+\begin{document}
+
+% --- HEADER BLOCK ---
+\begin{minipage}[c]{0.70\textwidth}
+    {\LARGE \textbf{\color{soledark}SOLEWISE · FOOTWEAR INTELLIGENCE}} \\[2pt]
+    {\small \color{soleterracotta} \textbf{Technical Whitepaper: System Genesis, Failure Analysis \& Full-Stack Architecture}}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.28\textwidth}
+    \raggedleft
+    {\footnotesize \textbf{Status:} \color{solegreen} Production Live}\\[1pt]
+    {\footnotesize \textbf{Host:} \href{https://sole-wise.onrender.com}{sole-wise.onrender.com}}\\[1pt]
+    {\footnotesize \textbf{Stack:} FastAPI + React + PostgreSQL}
+\end{minipage}
+
+\vspace{3pt}
+{\color{soleterracotta}\hrule height 1.5pt}
+\vspace{4pt}
+
+% --- EXECUTIVE SUMMARY ---
+\begin{tcolorbox}[colback=soleivory, colframe=soleborder, arc=3pt, boxrule=0.75pt, top=4pt, bottom=4pt, left=6pt, right=6pt]
+    \footnotesize
+    \textbf{Executive Summary:} \color{soledark}
+    Solewise was engineered to replace inefficient, error-prone spreadsheets in footwear manufacturing with an automated, dual-specification technical alternative matrix and batch yield optimizer. This report documents the critical engineering challenges encountered—including ephemeral cloud container data loss, Excel export encoding breakdown, and test fixture database pollution—alongside the architectural solutions deployed across database persistence, client ergonomics, and full-stack cloud infrastructure.
+\end{tcolorbox}
+
+\vspace{2pt}
+
+% --- KEY PERFORMANCE METRICS BAR ---
+\begin{tabularx}{\textwidth}{@{} *{4}{X} @{}}
+    \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=3pt, bottom=3pt]
+        {\Large \textbf{\color{soleterracotta} 60.7\%}}\\[-2pt]
+        {\tiny \textbf{Direct Cost Savings}\\(Synthetic vs Leather Upper)}
+    \end{tcolorbox}
+    &
+    \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=3pt, bottom=3pt]
+        {\Large \textbf{\color{soleterracotta} 100\%}}\\[-2pt]
+        {\tiny \textbf{Permanent ACID Sync}\\(Render Managed PostgreSQL)}
+    \end{tcolorbox}
+    &
+    \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=3pt, bottom=3pt]
+        {\Large \textbf{\color{soleterracotta} 13 / 13}}\\[-2pt]
+        {\tiny \textbf{Automated Tests Passing}\\(Isolated In-Memory DB)}
+    \end{tcolorbox}
+    &
+    \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=3pt, bottom=3pt]
+        {\Large \textbf{\color{soleterracotta} 33.1 kB}}\\[-2pt]
+        {\tiny \textbf{Optimized CSS Bundle}\\(Lightweight Mobile PWA)}
+    \end{tcolorbox}
+\end{tabularx}
+
+\vspace{3pt}
+
+% --- TWO COLUMN: PROBLEM VS SOLUTION ---
+\begin{minipage}[t]{0.485\textwidth}
+    {\small \textbf{\color{soleterracotta} 1. Problem Landscape \& Root Causes}}
+    \vspace{2pt}
+    
+    \begin{itemize}[leftmargin=*, itemsep=2pt, topsep=1pt]
+        \item \footnotesize \textbf{Ephemeral Cloud Data Loss:}
+        When hosted on free-tier containers (Render), the filesystem is ephemeral. Server sleep cycles (after 15 min inactivity) rebooted containers back to the initial Git commit, resetting the SQLite file and wiping user-entered materials.
+        
+        \item \footnotesize \textbf{Corrupted Excel / CSV Exports:}
+        CSV exports lacked UTF-8 BOM encoding. In MS Excel, Indian Rupee symbols became garbled artifacts (\texttt{â‚¹}), and numeric columns overflowed standard cell widths into \texttt{\#\#\#\#\#\#\#\#} syntax.
+        
+        \item \footnotesize \textbf{Database Test Pollution:}
+        Automated Pytest runs wrote mock test records (\textit{``Full Grain Bovine Leather\dots''}) straight into the live production SQLite database, cluttering the catalog with unwanted fixtures.
+        
+        \item \footnotesize \textbf{UI Clutter \& Mobile Viewport Breakage:}
+        Redundant legacy modules (\textit{Costing, Sequence, Suppliers}) and rigid tabular matrices caused horizontal page blowouts and lacked touch-friendly tap targets on smartphones.
+    \end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.485\textwidth}
+    {\small \textbf{\color{soleterracotta} 2. Technical Engineering Solutions}}
+    \vspace{2pt}
+    
+    \begin{itemize}[leftmargin=*, itemsep=2pt, topsep=1pt]
+        \item \footnotesize \textbf{Decoupled Cloud PostgreSQL Migration:}
+        Integrated \texttt{psycopg2-binary} and refactored SQLAlchemy with dynamic connection pooling (\texttt{pool\_pre\_ping}, \texttt{pool\_recycle=300}) attached to Render Managed PostgreSQL, guaranteeing permanent ACID durability across reboots.
+        
+        \item \footnotesize \textbf{Native SheetJS (.xlsx) Engine:}
+        Replaced broken CSV strings with client-side binary Excel generation (\texttt{xlsx}), dynamically computing character column auto-widths, typed numeric values, and native currency formatting.
+        
+        \item \footnotesize \textbf{In-Memory Isolated Test Harness:}
+        Configured FastAPI dependency overrides in Pytest to route tests to an isolated \texttt{sqlite:///:memory:} static pool, preserving 100\% production data purity.
+        
+        \item \footnotesize \textbf{Claude Design System \& Mobile PWA:}
+        Implemented warm ivory surfaces (\texttt{\#FAF9F5}), terracotta accents (\texttt{\#D97757}), mobile drawer navigation, edge-to-edge category swiping, and custom orange sneaker icons with PWA manifests.
+    \end{itemize}
+\end{minipage}
+
+\vspace{5pt}
+
+% --- SYSTEM ARCHITECTURE MATRIX ---
+{\small \textbf{\color{soleterracotta} 3. System Architecture \& Implementation Matrix}}
+\vspace{2pt}
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\rowcolor{soleterracotta}
+\textbf{\color{white} \footnotesize Layer} & 
+\textbf{\color{white} \footnotesize Technology} & 
+\textbf{\color{white} \footnotesize Key Production Architecture} \\
+\hline
+\rowcolor{soleivory}
+\footnotesize \textbf{Frontend UI} & \footnotesize React 18 + Vite + Tailwind & 
+\footnotesize Claude Design System, SheetJS Excel engine, responsive mobile drawer, standalone PWA manifest. \\
+\hline
+\footnotesize \textbf{Backend API} & \footnotesize FastAPI (Python 3.14) + Uvicorn & 
+\footnotesize ASGI endpoints, Pydantic v2 schemas, automated dual-specification alternative generation, CORS enabled. \\
+\hline
+\rowcolor{soleivory}
+\footnotesize \textbf{Database} & \footnotesize PostgreSQL (Render Cloud) & 
+\footnotesize Permanent cloud persistence, connection pooling, automatic schema creation, multi-client real-time sync. \\
+\hline
+\footnotesize \textbf{Hosting} & \footnotesize Render Web Service & 
+\footnotesize Unified full-stack deployment serving static React SPA and FastAPI endpoints under single SSL URL. \\
+\hline
+\end{tabularx}
+
+\vspace{5pt}
+
+% --- FOOTER ---
+{\color{soleborder}\hrule height 0.75pt}
+\vspace{2pt}
+\begin{center}
+    {\tiny \color{solegray} \textbf{Solewise Footwear Intelligence Platform} · Production Live: \href{https://sole-wise.onrender.com}{https://sole-wise.onrender.com} · GitHub: \href{https://github.com/Shree999751/Sole-Wise-}{Shree999751/Sole-Wise-} · Author: Shreyansh Jain}
+\end{center}
+
+\end{document}
