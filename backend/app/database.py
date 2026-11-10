@@ -5,7 +5,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 # Compute absolute path to ensure DB file is always found regardless of working directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_DB_FILE = os.path.join(BASE_DIR, "shoes_wise.db").replace("\\", "/")
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_FILE}")
+
+raw_db_url = os.getenv("DATABASE_URL", "").strip()
+DATABASE_URL = raw_db_url if raw_db_url else f"sqlite:///{DEFAULT_DB_FILE}"
 
 # SQLAlchemy requires postgresql:// instead of legacy postgres:// (common in Render/Supabase)
 if DATABASE_URL.startswith("postgres://"):
@@ -13,12 +15,14 @@ if DATABASE_URL.startswith("postgres://"):
 
 # Configure engine for SQLite or Cloud PostgreSQL (Supabase/Neon/Render)
 if DATABASE_URL.startswith("sqlite"):
+    print("[DB INIT] Using Local SQLite Database:", DATABASE_URL)
     engine = create_engine(
         DATABASE_URL,
         connect_args={"check_same_thread": False},
         echo=False
     )
 else:
+    print("[DB INIT] Using Cloud PostgreSQL Database at:", DATABASE_URL.split("@")[-1] if "@" in DATABASE_URL else "cloud")
     engine = create_engine(
         DATABASE_URL,
         pool_pre_ping=True,

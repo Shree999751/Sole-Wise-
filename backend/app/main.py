@@ -53,10 +53,14 @@ app.include_router(settings.router, prefix="/api")
 
 @app.get("/api/health")
 def health_check():
+    db_driver = engine.url.drivername
+    is_postgres = "postgres" in db_driver
     return {
         "status": "healthy",
         "service": "Shoes Wise Backend",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "database": "PostgreSQL (Permanent Cloud Storage)" if is_postgres else "SQLite (Temporary Container Storage)",
+        "is_permanent": is_postgres
     }
 
 # Mount Frontend static files if built
