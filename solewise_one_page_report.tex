@@ -4,7 +4,6 @@
 \usepackage{xcolor}
 \usepackage{tabularx}
 \usepackage{tcolorbox}
-\usepackage{graphicx}
 \usepackage{enumitem}
 \usepackage{hyperref}
 \usepackage{tikz}
@@ -12,7 +11,7 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 
-% Brand Color Definitions (Claude & Solewise Aesthetic)
+% Brand Color Definitions
 \definecolor{soleterracotta}{HTML}{D97757}
 \definecolor{soledark}{HTML}{201E1B}
 \definecolor{soleivory}{HTML}{FAF9F5}
@@ -35,14 +34,14 @@
 % --- HEADER BLOCK ---
 \begin{minipage}[c]{0.70\textwidth}
     {\LARGE \textbf{\color{soledark}SOLEWISE · FOOTWEAR INTELLIGENCE}} \\[2pt]
-    {\small \color{soleterracotta} \textbf{Technical Whitepaper: System Genesis, Failure Analysis \& Full-Stack Architecture}}
+    {\small \color{soleterracotta} \textbf{Project Overview, Problem Analysis \& Technical Solutions}}
 \end{minipage}
 \hfill
 \begin{minipage}[c]{0.28\textwidth}
     \raggedleft
     {\footnotesize \textbf{Status:} \color{solegreen} Production Live}\\[1pt]
     {\footnotesize \textbf{Host:} \href{https://sole-wise.onrender.com}{sole-wise.onrender.com}}\\[1pt]
-    {\footnotesize \textbf{Stack:} FastAPI + React + PostgreSQL}
+    {\footnotesize \textbf{Platform:} Web \& Mobile Phone App}
 \end{minipage}
 
 \vspace{3pt}
@@ -53,7 +52,7 @@
 \begin{tcolorbox}[colback=soleivory, colframe=soleborder, arc=3pt, boxrule=0.75pt, top=4pt, bottom=4pt, left=8pt, right=8pt]
     \footnotesize
     \textbf{Executive Summary:} \color{soledark}
-    Solewise was engineered to replace fragmented, error-prone spreadsheets in footwear manufacturing with an automated, dual-specification technical alternative matrix and batch yield optimizer. This report documents the critical engineering challenges encountered—including ephemeral cloud container data loss, Excel export encoding breakdown, and test fixture database pollution—alongside the architectural solutions deployed across database persistence, client ergonomics, and full-stack cloud infrastructure.
+    Solewise is a modern footwear cost intelligence platform designed to replace messy, manual spreadsheets with automatic material comparison and batch savings calculations. Footwear manufacturers can easily compare traditional leathers against modern synthetic alternatives, evaluate physical properties like thickness and flex cycles, and calculate exact production batch savings. This report details the key problems solved during development and how the application was made fast, reliable, and easy to use on both phones and computers.
 \end{tcolorbox}
 
 \vspace{3pt}
@@ -67,24 +66,24 @@
     &
     \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=4pt, bottom=4pt]
         {\Large \textbf{\color{soleterracotta} 100\%}}\\[-2pt]
-        {\tiny \textbf{Permanent ACID Sync}\\(Render Managed PostgreSQL)}
+        {\tiny \textbf{Permanent Cloud Sync}\\(Render PostgreSQL)}
     \end{tcolorbox}
     &
     \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=4pt, bottom=4pt]
         {\Large \textbf{\color{soleterracotta} 13 / 13}}\\[-2pt]
-        {\tiny \textbf{Automated Tests Passing}\\(Isolated In-Memory DB)}
+        {\tiny \textbf{Automated Tests Passing}\\(Zero Fake Test Data)}
     \end{tcolorbox}
     &
     \begin{tcolorbox}[colback=soleivory, colframe=soleborder, halign=center, arc=2pt, boxrule=0.5pt, top=4pt, bottom=4pt]
         {\Large \textbf{\color{soleterracotta} 33.1 kB}}\\[-2pt]
-        {\tiny \textbf{Optimized CSS Bundle}\\(Lightweight Mobile PWA)}
+        {\tiny \textbf{Ultra-Fast Page Load}\\(Smooth Mobile Experience)}
     \end{tcolorbox}
 \end{tabularx}
 
 \vspace{4pt}
 
 % --- ARCHITECTURE FLOWCHART SECTION ---
-{\small \textbf{\color{soleterracotta} 1. System Data Flow \& End-to-End Architecture}}
+{\small \textbf{\color{soleterracotta} 1. System Data Flow \& Architecture}}
 \vspace{2pt}
 
 \begin{tcolorbox}[colback=white, colframe=soleborder, arc=2pt, boxrule=0.75pt, halign=center, top=4pt, bottom=4pt]
@@ -96,12 +95,12 @@
     ]
         \node (specs) [box] {Footwear Material Specs};
         \node (api) [box, right=0.8cm of specs] {FastAPI Financial Engine};
-        \node (db) [box, above right=0.2cm and 0.8cm of api] {PostgreSQL Cloud ACID DB};
-        \node (sync) [box, right=0.6cm of db] {100\% Data Persistence};
+        \node (db) [box, above right=0.2cm and 0.8cm of api] {PostgreSQL Cloud Database};
+        \node (sync) [box, right=0.6cm of db] {Permanent Data Storage};
         \node (excel) [box, right=0.8cm of api] {SheetJS Native Excel Engine};
-        \node (xlsx) [box, right=0.6cm of excel] {Clean .xlsx Reports};
-        \node (pwa) [box, below right=0.2cm and 0.8cm of api] {React Mobile PWA UI};
-        \node (mobile) [box, right=0.6cm of pwa] {Touch-Friendly Mobile View};
+        \node (xlsx) [box, right=0.6cm of excel] {Clean Excel Reports};
+        \node (pwa) [box, below right=0.2cm and 0.8cm of api] {Responsive Mobile Web App};
+        \node (mobile) [box, right=0.6cm of pwa] {Touch-Friendly UI};
 
         \draw [arrow] (specs) -- (api);
         \draw [arrow] (api.north) |- (db.west);
@@ -115,77 +114,77 @@
 
 \vspace{4pt}
 
-% --- TWO COLUMN: PROBLEM VS SOLUTION ---
+% --- TWO COLUMN: PROBLEMS VS SOLUTIONS ---
 \begin{minipage}[t]{0.485\textwidth}
-    {\small \textbf{\color{soleterracotta} 2. Problem Landscape \& Root Causes}}
+    {\small \textbf{\color{soleterracotta} 2. Problems Identified in the System}}
     \vspace{2pt}
     
     \begin{itemize}[leftmargin=*, itemsep=2.5pt, topsep=1pt]
-        \item \footnotesize \textbf{Ephemeral Cloud Data Loss (Render Sleep Cycle):}\\
-        On free-tier container hosting, storage is ephemeral. Inactivity after 15 min caused sleep/wake cycles that reset the local SQLite file to the initial Git commit, wiping all user-entered materials.
+        \item \footnotesize \textbf{Disappearing Data on Free Cloud Server:}\\
+        When deployed on free cloud hosting, the server automatically sleeps after 15 minutes of inactivity. When it woke back up, it reset itself to the initial state, causing newly entered footwear materials and prices to vanish.
         
-        \item \footnotesize \textbf{Corrupted Excel \& CSV File Exports:}\\
-        CSV exports lacked UTF-8 BOM headers, causing Indian Rupee currency symbols to render as corrupted text (\texttt{â‚¹}) and unformatted columns to overflow into \texttt{\#\#\#\#\#\#\#\#} syntax in MS Excel.
+        \item \footnotesize \textbf{Broken \& Corrupted Excel Exports:}\\
+        Exported spreadsheets had broken formatting: rupee currency symbols turned into illegible garbled text, and column widths were too narrow, cutting off prices and numbers with errors.
         
-        \item \footnotesize \textbf{Production Database Test Pollution:}\\
-        Automated Pytest suites posted dummy test records (\textit{``Full Grain Bovine\dots''}) directly against the active production database, permanently corrupting the catalog with unwanted fixtures.
+        \item \footnotesize \textbf{Test Data Polluting the Real Catalog:}\\
+        Automated background tests were accidentally saving dummy sample records directly into the live catalog, cluttering the screen with unwanted test entries that the user never added.
         
-        \item \footnotesize \textbf{Desktop Navigation \& Mobile Viewport Breakage:}\\
-        Legacy views contained unneeded modules (Costing, Sequence, Suppliers) and wide tabular matrices that broke viewport bounds on smartphones with zero responsive touch targets.
+        \item \footnotesize \textbf{Cluttered Layout \& Poor Mobile Experience:}\\
+        The interface was packed with unnecessary menu items (Costing, Sequence, Suppliers) and wide desktop tables that cut off on phone screens with buttons too small to tap.
     \end{itemize}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.485\textwidth}
-    {\small \textbf{\color{soleterracotta} 3. Technical Engineering Solutions}}
+    {\small \textbf{\color{soleterracotta} 3. Solutions Built \& Implemented}}
     \vspace{2pt}
     
     \begin{itemize}[leftmargin=*, itemsep=2.5pt, topsep=1pt]
-        \item \footnotesize \textbf{Managed Cloud PostgreSQL Migration:}\\
-        Decoupled persistent storage from the container. Integrated \texttt{psycopg2-binary} with SQLAlchemy connection pooling (\texttt{pool\_pre\_ping}, \texttt{pool\_recycle=300}) on Render PostgreSQL for 100\% ACID durability.
+        \item \footnotesize \textbf{Permanent Cloud Database (PostgreSQL):}\\
+        Connected a dedicated cloud PostgreSQL database directly inside Render. Now, every footwear material, technical specification, and price entered by the user is permanently saved and never lost.
         
-        \item \footnotesize \textbf{Native In-Browser SheetJS (.xlsx) Engine:}\\
-        Replaced broken CSV strings with client-side binary Excel generation (\texttt{xlsx}), applying dynamic column auto-fitting, typed numeric cells, and clean INR (\rupee) formatting.
+        \item \footnotesize \textbf{Clean Native Excel (.xlsx) Downloads:}\\
+        Replaced broken text exports with real Microsoft Excel spreadsheets. Columns now automatically adjust to fit text, numbers are formatted cleanly, and prices display properly in Indian Rupees.
         
-        \item \footnotesize \textbf{Isolated In-Memory Pytest Harness:}\\
-        Refactored the test suite using FastAPI dependency overrides and an isolated \texttt{sqlite:///:memory:} StaticPool, ensuring 100\% test isolation without touching production files.
+        \item \footnotesize \textbf{Clean Database with Test Isolation:}\\
+        Separated the automated tests to run entirely in temporary test memory. Test sample shoes can never leak into the real catalog, keeping user data 100\% clean and accurate.
         
-        \item \footnotesize \textbf{Claude Design System \& Mobile PWA:}\\
-        Redesigned with Anthropic Claude aesthetic (warm parchment \texttt{\#FAF9F5}, terracotta \texttt{\#D97757}), touch targets $\ge 44$px, mobile drawer, and standalone PWA manifest with orange sneaker icons.
+        \item \footnotesize \textbf{Modern Mobile-First Design \& PWA:}\\
+        Redesigned the whole interface with warm, elegant typography, large touch-friendly buttons, a slide-out mobile menu, and an orange sneaker icon so it can be installed on phones like a native app.
     \end{itemize}
 \end{minipage}
 
 \vspace{5pt}
 
-% --- SYSTEM ARCHITECTURE MATRIX ---
-{\small \textbf{\color{soleterracotta} 4. System Architecture \& Implementation Matrix}}
+% --- SYSTEM IMPLEMENTATION MATRIX TABLE ---
+{\small \textbf{\color{soleterracotta} 4. Production Stack \& Deployment Summary}}
 \vspace{2pt}
 
 \begin{tabularx}{\textwidth}{|l|l|X|}
 \hline
 \rowcolor{soleterracotta}
-\textbf{\color{white} \footnotesize Layer} & 
+\textbf{\color{white} \footnotesize Component} & 
 \textbf{\color{white} \footnotesize Technology} & 
-\textbf{\color{white} \footnotesize Key Production Architecture \& Capabilities} \\
+\textbf{\color{white} \footnotesize Role \& Key Features} \\
 \hline
 \rowcolor{soleivory}
-\footnotesize \textbf{Frontend UI} & \footnotesize React 18 + Vite + Tailwind & 
-\footnotesize Claude Design tokens, SheetJS Excel engine, responsive mobile drawer, standalone PWA manifest. \\
+\footnotesize \textbf{User Interface} & \footnotesize React 18 + Tailwind CSS & 
+\footnotesize Modern warm styling, responsive mobile drawer, clean Excel export, phone app support. \\
 \hline
-\footnotesize \textbf{Backend API} & \footnotesize FastAPI (Python 3.14) + Uvicorn & 
-\footnotesize ASGI asynchronous runtime, Pydantic v2 schemas, automated dual-specification alternative linkage. \\
+\footnotesize \textbf{Backend Server} & \footnotesize FastAPI (Python 3.14) & 
+\footnotesize Fast web API, material alternative matching, automatic batch cost and yield calculations. \\
 \hline
 \rowcolor{soleivory}
 \footnotesize \textbf{Database} & \footnotesize PostgreSQL (Render Cloud) & 
-\footnotesize Permanent ACID cloud storage, connection pooling, automated schema creation, zero data loss. \\
+\footnotesize Permanent cloud database, zero data loss, instant synchronization across phone and laptop. \\
 \hline
-\footnotesize \textbf{Hosting} & \footnotesize Render Web Service & 
-\footnotesize Unified full-stack deployment serving static React SPA and FastAPI endpoints under single SSL URL. \\
+\footnotesize \textbf{Live Hosting} & \footnotesize Render Web Service & 
+\footnotesize Full-stack single domain hosting with automatic HTTPS security at sole-wise.onrender.com. \\
 \hline
 \end{tabularx}
 
 \vspace{5pt}
 
-% --- FOOTER ---
+% --- CLEAN FOOTER ---
 {\color{soleborder}\hrule height 0.75pt}
 \vspace{2pt}
 \begin{center}
