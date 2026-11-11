@@ -20,22 +20,40 @@ db_error_message = None
 if db_is_postgres:
     db_host_display = DATABASE_URL.split("@")[-1] if "@" in DATABASE_URL else "cloud"
     print(f"[DB INIT] Attempting Cloud PostgreSQL connection to: {db_host_display}")
-    try:
-        engine = create_engine(
-            DATABASE_URL,
-            pool_pre_ping=True,
-            pool_recycle=300,
-            echo=False
-        )
-        # Test connection actively
-        with engine.connect() as conn:
-            pass
-        db_status_detail = "PostgreSQL (Permanent Cloud Storage)"
-        print("[DB INIT] Successfully connected to Cloud PostgreSQL!")
-    except Exception as e:
-        db_error_message = f"{type(e).__name__}: {str(e)}"
-        print(f"[DB INIT ERROR] Cloud PostgreSQL failed ({db_error_message}). Falling back to SQLite to prevent downtime.")
-        db_status_detail = f"SQLite Fallback (Postgres Error: {type(e).__name__})"
+    
+    # Try with default URL, psycopg2, and psycopg (v3) dialect variants
+    urls_to_try = [DATABASE_URL]
+    if DATABASE_URL.startswith("postgresql://"):
+        urls_to_try.append(DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1))
+        urls_to_try.append(DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1))
+
+    connected = False
+    last_err = None
+    for url in urls_to_try:
+        driver_tag = url.split("://")[0]
+        try:
+            print(f"[DB INIT] Probing driver '{driver_tag}'...")
+            test_engine = create_engine(
+                url,
+                pool_pre_ping=True,
+                pool_recycle=300,
+                echo=False
+            )
+            with test_engine.connect() as conn:
+                pass
+            engine = test_engine
+            db_status_detail = "PostgreSQL (Permanent Cloud Storage)"
+            connected = True
+            print(f"[DB INIT] Successfully established active Cloud PostgreSQL connection via '{driver_tag}'!")
+            break
+        except Exception as e:
+            last_err = e
+            print(f"[DB INIT] Driver '{driver_tag}' connection test failed: {e}")
+
+    if not connected:
+        db_error_message = f"{type(last_err).__name__}: {str(last_err)}"
+        print(f"[DB INIT ERROR] All PostgreSQL connection attempts failed ({db_error_message}). Falling back to SQLite.")
+        db_status_detail = f"SQLite Fallback (Postgres Error: {type(last_err).__name__})"
         DATABASE_URL = f"sqlite:///{DEFAULT_DB_FILE}"
         engine = create_engine(
             DATABASE_URL,
