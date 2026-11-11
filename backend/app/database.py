@@ -1,4 +1,5 @@
 import os
+from urllib.parse import quote_plus, unquote
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -6,12 +7,33 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_DB_FILE = os.path.join(BASE_DIR, "shoes_wise.db").replace("\\", "/")
 
-raw_db_url = os.getenv("DATABASE_URL", "").strip()
-DATABASE_URL = raw_db_url if raw_db_url else f"sqlite:///{DEFAULT_DB_FILE}"
+def clean_database_url(url: str) -> str:
+    """
+    Cleans and encodes special characters in DB URL (e.g. '@' in passwords).
+    Normalizes 'postgres://' to 'postgresql://'.
+    """
+    if not url:
+        return url
+    url = url.strip()
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    
+    try:
+        scheme_sep = "://"
+        if scheme_sep in url:
+            scheme, rest = url.split(scheme_sep, 1)
+            if "@" in rest:
+                auth_part, host_part = rest.rsplit("@", 1)
+                if ":" in auth_part:
+                    user, password = auth_part.split(":", 1)
+                    clean_pw = quote_plus(unquote(password))
+                    url = f"{scheme}://{user}:{clean_pw}@{host_part}"
+    except Exception as parse_err:
+        print(f"[DB INIT WARNING] URL cleanup failed ({parse_err}), using raw URL.")
+    return url
 
-# SQLAlchemy requires postgresql:// instead of legacy postgres:// (common in Render/Supabase)
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+raw_db_url = os.getenv("DATABASE_URL", "").strip()
+DATABASE_URL = clean_database_url(raw_db_url) if raw_db_url else f"sqlite:///{DEFAULT_DB_FILE}"
 
 db_is_postgres = not DATABASE_URL.startswith("sqlite")
 db_status_detail = "SQLite (Local File)"
@@ -21,11 +43,14 @@ if db_is_postgres:
     db_host_display = DATABASE_URL.split("@")[-1] if "@" in DATABASE_URL else "cloud"
     print(f"[DB INIT] Attempting Cloud PostgreSQL connection to: {db_host_display}")
     
-    # Try with default URL, psycopg2, and psycopg (v3) dialect variants
-    urls_to_try = [DATABASE_URL]
+    # Try with psycopg2 first (reliable), default, and psycopg (v3)
+    urls_to_try = []
     if DATABASE_URL.startswith("postgresql://"):
         urls_to_try.append(DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1))
+        urls_to_try.append(DATABASE_URL)
         urls_to_try.append(DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1))
+    else:
+        urls_to_try.append(DATABASE_URL)
 
     connected = False
     last_err = None
@@ -42,7 +67,7 @@ if db_is_postgres:
             with test_engine.connect() as conn:
                 pass
             engine = test_engine
-            db_status_detail = "PostgreSQL (Permanent Cloud Storage)"
+            db_status_detail = "PostgreSQL (Permanent Cloud Storage - Supabase)"
             connected = True
             print(f"[DB INIT] Successfully established active Cloud PostgreSQL connection via '{driver_tag}'!")
             break
