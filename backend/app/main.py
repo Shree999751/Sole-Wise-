@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from .database import engine, Base, SessionLocal
+from .database import engine, Base, SessionLocal, db_status_detail, db_error_message
 from .seed_data import seed_database
 from .routes import (
     materials,
@@ -55,13 +55,16 @@ app.include_router(settings.router, prefix="/api")
 def health_check():
     db_driver = engine.url.drivername
     is_postgres = "postgres" in db_driver
-    return {
+    response = {
         "status": "healthy",
         "service": "Shoes Wise Backend",
         "version": "1.0.0",
-        "database": "PostgreSQL (Permanent Cloud Storage)" if is_postgres else "SQLite (Temporary Container Storage)",
+        "database": db_status_detail,
         "is_permanent": is_postgres
     }
+    if db_error_message:
+        response["database_error"] = db_error_message
+    return response
 
 # Mount Frontend static files if built
 frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
